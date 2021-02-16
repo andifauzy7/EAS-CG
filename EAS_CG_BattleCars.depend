@@ -1,0 +1,26 @@
+# depslib dependency file v1.0
+1613452793 source:d:\tugas\eas_cg_battlecars\main.cpp
+	<iostream>
+	<windows.h>
+	<GL/glut.h>
+	<math.h>
+	"BmpLoader.h"
+
+1612007534 source:d:\tugas\eas_cg_battlecars\windowscreen.cpp
+	<iostream>
+	<windows.h>
+	<GL/glut.h>
+
+1612007641 d:\tugas\eas_cg_battlecars\windowscreen.cpp
+	<iostream>
+	<windows.h>
+	<GL/glut.h>
+
+1575801482 source:d:\tugas\eas_cg_battlecars\bmploader.cpp
+	"BmpLoader.h"
+	<stdio.h>
+	<iostream>
+
+1575800656 d:\tugas\eas_cg_battlecars\bmploader.h
+	<windows.h>
+
