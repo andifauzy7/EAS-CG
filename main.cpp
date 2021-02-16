@@ -11,14 +11,9 @@ using namespace std;
 GLfloat Widthfactor;
 GLfloat Heightfactor;
 GLfloat Zoom = 1;
-GLint spin_x = 0;
-GLint spin_y = 0;
 GLfloat New_x;
 GLfloat New_y;
-GLfloat xt=0.0,yt=0.0,zt=0.0,xw=0.0,zt1=0.0;   /* x,y,z translation */
-GLfloat degree=0.0;
 GLuint _textureMaps;
-bool isShot = false;
 GLuint loadTexture(const char* filename);
 
 GLuint loadTexture(const char* filename) {
@@ -39,11 +34,8 @@ GLuint loadTexture(const char* filename) {
 
 class car {
 public:
-    float frontBody;
-    float backBody;
-    float rightBody;
-    float leftBody;
     float degree;
+    float health;
     float coordinateX;
     float coordinateY;
     float coordinateZ;
@@ -51,68 +43,70 @@ public:
         this->coordinateX = aCoordinateX;
         this->coordinateY = aCoordinateY;
         this->coordinateZ = aCoordinateZ;
-        this->frontBody = aCoordinateZ - 1.0;
-        this->backBody = aCoordinateZ + 1.0;
-        this->rightBody = aCoordinateX + 0.6;
-        this->leftBody = aCoordinateX - 0.6;
+        this->health = 100;
+    }
+    float frontBody(){
+        return this->coordinateZ - 1.0;
+    }
+    float backBody(){
+        return this->coordinateZ + 1.0;
+    }
+    float rightBody(){
+        return this->coordinateX + .6;
+    }
+    float leftBody(){
+        return this->coordinateX - .6;
     }
     void buildCar(){
-        glTranslatef(coordinateX,coordinateY,coordinateZ);
-        glRotated(degree,0.0,5.0,0.0);
         glPushMatrix();
-
+            glTranslatef(coordinateX,coordinateY,coordinateZ);
+            glRotated(degree,0.0,5.0,0.0);
             // WHEELS CAR.
             glPushMatrix();
-            glTranslatef(-.5,-.2,0.5);
-            glColor3f(0.0/255.0f, 0.0/255.0f, 255.0/255.0f);
-            glRotated(90.0,0.0,5.0,0.0);
-            glutSolidTorus(.1,.2,8,8);
-            glTranslatef(1,0,0);
-            glutSolidTorus(.1,.2,8,8);
+                glTranslatef(-.5,-.2,0.5);
+                glColor3f(0.0/255.0f, 0.0/255.0f, 255.0/255.0f);
+                glRotated(90.0,0.0,5.0,0.0);
+                glutSolidTorus(.1,.2,8,8);
+                glTranslatef(1,0,0);
+                glutSolidTorus(.1,.2,8,8);
             glPopMatrix();
 
             glPushMatrix();
-            glTranslatef(1,0,-1);
-            glTranslatef(-.5,-.2,0.5);
-            glColor3f(0.0/255.0f, 0.0/255.0f, 255.0/255.0f);
-            glRotated(270.0,0.0,5.0,0.0);
-            glutSolidTorus(.1,.2,8,8);
-            glTranslatef(1,0,0);
-            glutSolidTorus(.1,.2,8,8);
+                glTranslatef(1,0,-1);
+                glTranslatef(-.5,-.2,0.5);
+                glColor3f(0.0/255.0f, 0.0/255.0f, 255.0/255.0f);
+                glRotated(270.0,0.0,5.0,0.0);
+                glutSolidTorus(.1,.2,8,8);
+                glTranslatef(1,0,0);
+                glutSolidTorus(.1,.2,8,8);
             glPopMatrix();
 
             // BODY CAR.
-            glTranslatef(0,0,0);
-            glColor3f(0.0/255.0f, 0.0/255.0f, 99.0/255.0f);
-            glScalef(2,1,4);
-            glutSolidCube(.5);
+            glPushMatrix();
+                glTranslatef(0,0,0);
+                glColor3f(0.0/255.0f, 0.0/255.0f, 99.0/255.0f);
+                glScalef(2,1,4);
+                glutSolidCube(.5);
 
-            glColor3f(99.0/255.0f, 0.0/255.0f, 0.0/255.0f);
-            glTranslatef(0,.3,-.05);
-            glScalef(2,3,0.6);
-            glutSolidCube(.25);
+                glColor3f(99.0/255.0f, 0.0/255.0f, 0.0/255.0f);
+                glTranslatef(0,.3,-.05);
+                glScalef(2,3,0.6);
+                glutSolidCube(.25);
 
-            glColor3f(0.0/255.0f, 99.0/255.0f, 0.0/255.0f);
-            glTranslatef(-.001,.001,-.12);
-            glScalef(2.48,1.8,1);
-            glRotatef(230, 250, 0, 0);
-            glutSolidCube(.1);
-
+                glColor3f(0.0/255.0f, 99.0/255.0f, 0.0/255.0f);
+                glTranslatef(-.001,.001,-.12);
+                glScalef(2.48,1.8,1);
+                glRotatef(230, 250, 0, 0);
+                glutSolidCube(.1);
             glPopMatrix();
 
-            glTranslatef(0,1,-.5);
-            glColor3f(0.0/255.0f, 99.0/255.0f, 99.0/255.0f);
-            glScalef(0.5,1,1.5);
-            glutSolidCube(.5);
+            glPushMatrix();
+                glTranslatef(0,1,-.5);
+                glColor3f(0.0/255.0f, 99.0/255.0f, 99.0/255.0f);
+                glScalef(0.5,1,1.5);
+                glutSolidCube(.5);
+            glPopMatrix();
 
-        glPopMatrix();
-    }
-    void shot(){
-        glTranslatef(coordinateX,coordinateY,zt1);
-        glPushMatrix();
-            glTranslatef(0,1,-1);
-            glColor3f(0.0/255.0f, 0.0/255.0f, 255.0/255.0f);
-            glutSolidTeapot(.2);
         glPopMatrix();
     }
 };
@@ -121,17 +115,17 @@ class maps {
 public:
     void buildMaps(){
         glPushMatrix();
-    	glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, _textureMaps );
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBegin(GL_QUADS);
-            glTexCoord3f(0.0,50.0,1);  glVertex3f(-50,-1.5,50);
-            glTexCoord3f(0.0,0.0,1);  glVertex3f(-50,-1.5,-50);
-            glTexCoord3f(50.0,0.0,1);  glVertex3f(50,-1.5,-50);
-            glTexCoord3f(50.0,50.0,1);  glVertex3f(50,-1.5,50);
-        glEnd();
-        glDisable(GL_TEXTURE_2D);
+            glEnable(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, _textureMaps );
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glBegin(GL_QUADS);
+                glTexCoord3f(0.0,50.0,1);  glVertex3f(-50,-1.5,50);
+                glTexCoord3f(0.0,0.0,1);  glVertex3f(-50,-1.5,-50);
+                glTexCoord3f(50.0,0.0,1);  glVertex3f(50,-1.5,-50);
+                glTexCoord3f(50.0,50.0,1);  glVertex3f(50,-1.5,50);
+            glEnd();
+            glDisable(GL_TEXTURE_2D);
         glPopMatrix();
     }
 };
@@ -156,48 +150,94 @@ public:
     }
 };
 
+class weapon {
+public:
+    bool hitEnemy = false;
+    float rangeAmmo = 0.0;
+    float degree;
+    float coordinateX;
+    float coordinateY;
+    float coordinateZ;
+    weapon(float aCoordinateX, float aCoordinateY, float aCoordinateZ){
+        this->coordinateX = aCoordinateX;
+        this->coordinateY = aCoordinateY;
+        this->coordinateZ = aCoordinateZ;
+    }
+    void updatePosition(float aCoordinateX, float aCoordinateY, float aCoordinateZ, float aDegree){
+        this->degree = aDegree;
+        this->coordinateX = aCoordinateX;
+        this->coordinateY = aCoordinateY;
+        this->coordinateZ = aCoordinateZ;
+    }
+    void shot(){
+        glPushMatrix();
+            this->coordinateZ = coordinateZ + (-1*rangeAmmo);
+            glTranslatef(coordinateX,coordinateY,coordinateZ);
+            glRotated(degree,0.0,5.0,0.0);
+            glTranslatef(0,1,-.5);
+            glColor3f(0.0/255.0f, 255.0/255.0f, 0.0/255.0f);
+            glutSolidTeapot(.1);
+        glPopMatrix();
+    }
+};
+
 void MyInit() {
     // Warna Dasar (Background)
 	glClearColor(178.0f/255.0f, 190.0f/255.0f, 195.0f/255.0f, 1.0);
 	_textureMaps = loadTexture("roof.bmp");
 }
 
+// -- Inisiasi Objek.
+car mobilKolbak(0,0,0);
+maps mapnya;
+car mobilMusuh(0,0,-5);
+weapon senjata(0,0,0);
 void DrawScene() {
-	glRotatef(spin_x, 0.0, 1.0, 0.0);
-	glRotatef(spin_y, 0.0, 0.0, 1.0);
 	glScalef(Zoom, Zoom, Zoom);
 	glColor3f(0.7, 0.7, 0.7);
 	glPushMatrix();
 	glTranslatef(0.0, 0.0, 0.0);
-	//glTranslatef(xt,yt,zt);
 
 	// -- Persegi Panjang atau Jalan
-	maps mapnya;
 	mapnya.buildMaps();
 
 	// -- Mobil Player
-    car mobilKolbak(xt,yt,zt);
-    mobilKolbak.degree = degree;
     mobilKolbak.buildCar();
 
-    if(isShot == true){
-        mobilKolbak.shot();
+	// -- Mobil Musuh
+	if(mobilMusuh.health > 0){
+        mobilMusuh.buildCar();
+	}
+
+	// -- Senjata
+	senjata.updatePosition(mobilKolbak.coordinateX, mobilKolbak.coordinateY, mobilKolbak.coordinateZ, mobilKolbak.degree);
+	if(senjata.rangeAmmo <= 5.0){
+        senjata.shot();
+	}
+
+
+	// -- Mobil Collision.
+	if(
+       (mobilKolbak.frontBody() <= mobilMusuh.backBody() && mobilKolbak.backBody() >= mobilMusuh.frontBody()) &&
+       (mobilKolbak.leftBody() <= mobilMusuh.rightBody() && mobilKolbak.rightBody() >= mobilMusuh.leftBody())
+       ){
+        //mobilKolbak.health -= 10;
+    } else {
+        //
     }
 
-	// -- Mobil Musuh
-	/*
-    car mobilMusuh(0,0,-5);
-    //mobilMusuh.buildCar();
-
+    // -- Senjata Collision.
     if(
-       (mobilKolbak.frontBody <= mobilMusuh.backBody && mobilKolbak.backBody >= mobilMusuh.frontBody) &&
-       (mobilKolbak.leftBody <= mobilMusuh.rightBody && mobilKolbak.rightBody >= mobilMusuh.leftBody)
+       (senjata.coordinateZ <= mobilMusuh.backBody() && senjata.coordinateZ >= mobilMusuh.frontBody()) &&
+       (senjata.coordinateX <= mobilMusuh.rightBody() && senjata.coordinateX >= mobilMusuh.leftBody())
        ){
-           // Terjadi collision.
-           printf("Bingo\n");
+        senjata.hitEnemy = true;
+        senjata.rangeAmmo = 5;
+        mobilMusuh.health -= 20;
     } else {
-        mobilMusuh.buildCar();
-    } */
+        senjata.hitEnemy = false;
+    }
+
 
     glPopMatrix();
 }
@@ -211,7 +251,7 @@ void MyDisplay() {
         gluPerspective(50, 1.0 *(Widthfactor/Heightfactor), 3.0, 50.0);
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
-        gluLookAt(0.0 + xt, 10.0, 10.0 + zt,  xt, 0.0, zt,  0.0, 5.0, 0.0);
+        gluLookAt(0.0 + mobilKolbak.coordinateX, 10.0, 10.0 + mobilKolbak.coordinateZ,  mobilKolbak.coordinateX, 0.0, mobilKolbak.coordinateZ,  0.0, 5.0, 0.0);
         DrawScene();
         glPopMatrix();
         glMatrixMode(GL_PROJECTION);
@@ -230,36 +270,34 @@ void MySpecial(int key, int x, int y){
 	switch (key)
 	{
     case GLUT_KEY_F1:{
-        if(isShot==false){
-            isShot = true;
-        } else {
-            isShot = false;
+        if(senjata.rangeAmmo>=5.0){
+            senjata.rangeAmmo = 0.0;
         }
         break;
     }
     case GLUT_KEY_UP:{
-        zt -= 0.2;
-        degree = 0.0;
+        mobilKolbak.coordinateZ -= 0.2;
+        mobilKolbak.degree = 0;
         glutPostRedisplay();
         break;
     }
     case GLUT_KEY_DOWN:{
-        zt += 0.2;
-        degree = 0.0;
+        mobilKolbak.coordinateZ += 0.2;
+        mobilKolbak.degree = 0;
         glutPostRedisplay();
 	    break;
     }
 	case GLUT_KEY_LEFT:{
-	    zt -= 0.2;
-	    xt -= 0.2;
-	    degree = 90.0;
+	    mobilKolbak.coordinateZ -= 0.2;
+	    mobilKolbak.coordinateX -= 0.2;
+	    mobilKolbak.degree = 30;
         glutPostRedisplay();
 		break;
 	}
 	case (GLUT_KEY_RIGHT):{
-	    zt -= 0.2;
-	    xt += 0.2;
-	    degree = -90.0;
+	    mobilKolbak.coordinateZ -= 0.2;
+	    mobilKolbak.coordinateX += 0.2;
+	    mobilKolbak.degree = -30;
         glutPostRedisplay();
 		break;
 	}
@@ -292,19 +330,8 @@ void MyMouse(int button, int state, int x, int y){
 	}
 }
 
-void MyMotion(int x, int y){
-	spin_x = x - New_x;
-	spin_y = y - New_y;
-	DrawScene();
-	glutPostRedisplay();
-}
-
 void idle(){
-    if(isShot == true){
-        zt1 -= 0.002;
-    } else {
-        zt1 = zt;
-    }
+    senjata.rangeAmmo += 0.002;
     glutPostRedisplay();
 }
 
@@ -325,7 +352,6 @@ int main(int argc, char** argv) {
 	glutSpecialFunc(MySpecial);
 	glutIdleFunc(idle);
 	//glutMouseFunc(MyMouse);
-	//glutMotionFunc(MyMotion);
 	glutMainLoop();
 	return 0;
 }
