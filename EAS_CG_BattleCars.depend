@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1613543215 source:d:\tugas\eas_cg_battlecars\main.cpp
+1613558167 source:d:\tugas\eas_cg_battlecars\main.cpp
 	<iostream>
 	<windows.h>
 	<GL/glut.h>

@@ -15,18 +15,6 @@ GLfloat New_x, New_y;
 GLuint _textureMaps, _textureSky;
 GLuint loadTexture(const char* filename);
 
-class camera {
-    public:
-    float AngleX;
-    float AngleY;
-    float AngleZ;
-    camera(float aAngleX, float aAngleY, float aAngleZ){
-        this->AngleX = aAngleX;
-        this->AngleY = aAngleY;
-        this->AngleZ = aAngleZ;
-    }
-};
-
 GLuint loadTexture(const char* filename) {
 	BmpLoader bl(filename);
 	GLuint textureId;
@@ -42,6 +30,18 @@ GLuint loadTexture(const char* filename) {
 				 bl.textureData);
 	return textureId;
 }
+
+class camera {
+    public:
+    float AngleX;
+    float AngleY;
+    float AngleZ;
+    camera(float aAngleX, float aAngleY, float aAngleZ){
+        this->AngleX = aAngleX;
+        this->AngleY = aAngleY;
+        this->AngleZ = aAngleZ;
+    }
+};
 
 class weapon {
 public:
@@ -76,7 +76,7 @@ public:
 
 class car {
 public:
-    bool lifeStatus;
+    boolean lifeStatus;
     float movementSpeed;
     float degree;
     float health;
@@ -88,8 +88,8 @@ public:
         this->coordinateY = aCoordinateY;
         this->coordinateZ = aCoordinateZ;
         this->health = 100;
-        this->movementSpeed = 0.2;
         this->lifeStatus = true;
+        this->movementSpeed = 0.2;
     }
     float frontBody(){
         return this->coordinateZ - 1.0;
@@ -112,9 +112,9 @@ public:
                 glTranslatef(-.5,-.2,0.5);
                 glColor3f(0.0/255.0f, 0.0/255.0f, 255.0/255.0f);
                 glRotated(90.0,0.0,5.0,0.0);
-                glutSolidTorus(.1,.2,8,8);
+                glutWireTorus(.1,.2,8,8);
                 glTranslatef(1,0,0);
-                glutSolidTorus(.1,.2,8,8);
+                glutWireTorus(.1,.2,8,8);
             glPopMatrix();
 
             glPushMatrix();
@@ -122,9 +122,9 @@ public:
                 glTranslatef(-.5,-.2,0.5);
                 glColor3f(0.0/255.0f, 0.0/255.0f, 255.0/255.0f);
                 glRotated(270.0,0.0,5.0,0.0);
-                glutSolidTorus(.1,.2,8,8);
+                glutWireTorus(.1,.2,8,8);
                 glTranslatef(1,0,0);
-                glutSolidTorus(.1,.2,8,8);
+                glutWireTorus(.1,.2,8,8);
             glPopMatrix();
 
             // BODY CAR.
@@ -256,7 +256,6 @@ void MyInit() {
 void DrawScene() {
 	glColor3f(0.7, 0.7, 0.7);
 	glPushMatrix();
-	glTranslatef(0.0, 0.0, 0.0);
 	// -- Persegi Panjang atau Jalan
 	mapnya.buildMaps();
 
@@ -264,6 +263,7 @@ void DrawScene() {
 	if(mobilMusuh.health >= 0 && mobilMusuh.lifeStatus == true){
         mobilMusuh.buildCar();
 	}
+
 	// -- Mobil Player
     mobilKolbak.buildCar();
 	// -- Senjata
@@ -278,9 +278,15 @@ void DrawScene() {
 	if(senjata.rangeAmmo <= 5.0){
         senjata.shot();
 	}
-
-	if(senjataMusuh.rangeAmmo <= 5.0){
+	if(mobilMusuh.lifeStatus==true){
         senjataMusuh.shot();
+	} else {
+	    car mobilMusuh1(mobilMusuh.coordinateX + 5,mobilMusuh.coordinateY,mobilMusuh.coordinateZ);
+        weapon senjataMusuh1(mobilMusuh.coordinateX + 5,mobilMusuh.coordinateY,mobilMusuh.coordinateZ);
+        car mobilMusuh2(mobilMusuh.coordinateX - 5,mobilMusuh.coordinateY,mobilMusuh.coordinateZ);
+        weapon senjataMusuh2(mobilMusuh.coordinateX - 5,mobilMusuh.coordinateY,mobilMusuh.coordinateZ);
+        mobilMusuh1.buildCar();
+        mobilMusuh2.buildCar();
 	}
 	// -- Mobil Collision.
 	if(
@@ -297,10 +303,12 @@ void DrawScene() {
        (senjata.coordinateZ <= mobilMusuh.backBody() && senjata.coordinateZ >= mobilMusuh.frontBody()) &&
        (senjata.coordinateX <= mobilMusuh.rightBody() && senjata.coordinateX >= mobilMusuh.leftBody())
        ){
-        //printf("Hit Damage : 50, HP : %f\n", mobilMusuh.health);
         senjata.hitEnemy = true;
         senjata.rangeAmmo = 5;
         mobilMusuh.health -= 50;
+        if(mobilMusuh.health <= 0){
+            mobilMusuh.lifeStatus = false;
+        }
     } else {
         senjata.hitEnemy = false;
     }
@@ -419,7 +427,7 @@ void idle(){
     }
     senjata.rangeAmmo += 0.002;
 
-    if(senjataMusuh.rangeAmmo>=5.0){
+    if(senjataMusuh.rangeAmmo>5.0){
             senjataMusuh.rangeAmmo = 0.0;
     } else {
             senjataMusuh.rangeAmmo += 0.002;
